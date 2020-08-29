@@ -1,0 +1,18 @@
+version: "3"
+services:
+  reverseproxy:
+    build:
+      context: .
+    image: jchaplin2/udagram-reverse-proxy:latest
+  backend_user:
+    build:
+      context: ../../user-api
+    image: jchaplin2/udagram-user-api:latest
+  backend_feed:
+    build:
+      context: ../../feed-api
+    image: jchaplin2/udagram-feed-api:latest
+  frontend:
+    build:
+      context: ../../ui
+    image: jchaplin2/udagram-ui:latest

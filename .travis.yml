@@ -1,0 +1,43 @@
+language: minimal
+
+services:
+  - docker
+
+env:
+    - DOCKER_COMPOSE_VERSION=1.23.2
+
+before_install:
+
+    - docker -v && docker-compose -v
+    - sudo rm /usr/local/bin/docker-compose
+    - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+    - chmod +x docker-compose
+    - sudo mv docker-compose /usr/local/bin
+    - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+    - chmod +x ./kubectl
+    - sudo mv ./kubectl /usr/local/bin/kubectl
+
+install:
+    - docker-compose -f deployment/docker/docker-compose-build.yaml build --parallel
+
+script:
+  - docker --version # print the version for logging
+
+  - docker build -t udagram-feed-api .
+  - docker tag udagram-feed-api jchaplin2/udagram-feed-api:latest
+
+  - docker build -t udagram-ui .
+  - docker tag udagram-ui jchaplin2/udagram-ui:latest
+
+  - docker build -t udagram-user-api .
+  - docker tag udagram-user-api jchaplin2/udagram-user-api:latest
+  
+  - docker build -t udagram-reverse-proxy .
+  - docker tag udagram-reverse-proxy jchaplin2/udagram-reverse-proxy:latest
+
+after_success:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push jchaplin2/udagram-feed-api
+  - docker push jchaplin2/udagram-ui
+  - docker push jchaplin2/udagram-user-api
+  - docker push jchaplin2/udagram-reverse-proxy
