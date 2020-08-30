@@ -23,16 +23,16 @@ install:
 script:
   - docker --version # print the version for logging
 
-  - docker build -t udagram-feed-api -f feed-api/DockerFile .
+  - docker build -t udagram-feed-api feed-api .
   - docker tag udagram-feed-api jchaplin2/udagram-feed-api:latest
 
-  - docker build -t udagram-ui -f ui/DockerFile .
+  - docker build -t udagram-ui ui .
   - docker tag udagram-ui jchaplin2/udagram-ui:latest
 
-  - docker build -t udagram-user-api -f user-api/DockerFile .
+  - docker build -t udagram-user-api user-api .
   - docker tag udagram-user-api jchaplin2/udagram-user-api:latest
   
-  - docker build -t udagram-reverse-proxy -f deployment/docker/DockerFile .
+  - docker build -t udagram-reverse-proxy deployment/docker .
   - docker tag udagram-reverse-proxy jchaplin2/udagram-reverse-proxy:latest
 
 after_success:
